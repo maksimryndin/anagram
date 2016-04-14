@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Анаграммы</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form id='level-picker'>
+        Выберите уровень:<br>
+
+        <input name='levels' id='level3' type='radio' value='3' checked>
+        <label for='level3'>3</label><br>
+
+        <input name='levels' id='level4' type='radio' value='4'>
+        <label for='level4'>4</label><br>
+
+        <input name='levels' id='level5' type='radio' value='5'>
+        <label for='level5'>5</label><br>
+
+        <input name='levels' id='level6' type='radio' value='6'>
+        <label for='level6'>6</label><br>
+
+        <input id='level-btn' type='button' value='Играть'></input>
+    </form>
+
+    <script>
+
+        var words = {3: ['хор', 'рот', 'ухо'],
+                     4: ['лист', 'перо', 'туча'],
+                     5: ['палка', 'доска', 'рубин'],
+                     6: ['гвоздь', 'машина', 'одеяло']}
+
+        var button = document.querySelector("#level-btn");
+        var checkedLevel = document.querySelector('input[name=levels]:checked').value;
+        var levelForm = document.querySelector("#level-picker")
+
+        button.addEventListener('click', function() {
+            levelForm.style.display = 'none';
+            var lev = new Level(words, Number(checkedLevel));
+            lev.createEventListeners();
+        })
+
+        function Level(levels, levelNumber) {
+            this.levelNumber = levelNumber;
+            var levelWords = levels[levelNumber];
+            var randomIndex = Math.floor(Math.random() * levelWords.length);
+            this.charArray = [].slice.call(levelWords[randomIndex]);
+            this.charShuffledArray = this.charArray;
+            /*while (comparePermutatedArrays(this.charShuffledArray, this.charArray)); {
+
+            }*/
+            shuffle(this.charShuffledArray);
+            this.status = null;
+
+            var container = document.createElement('div');
+            document.body.appendChild(container);
+            container.id='container';
+            this.charShuffledArray.map(function(char){
+                var divChar = document.createElement('div');
+                divChar.draggable = 'true';
+                divChar.className = 'char';
+                divChar.textContent = char;
+                container.appendChild(divChar);
+            });
+        }
+
+        Level.prototype.createEventListeners = function() {
+            var divChars = document.querySelectorAll(".char");
+            var dragSrcEl = null;
+            //var result = [];
+            //var answer = this.charArray;
+            [].forEach.call(divChars, function(divChar){
+                divChar.addEventListener('dragstart', dragstartHandler);
+                divChar.addEventListener('dragover', dragoverHandler);
+                divChar.addEventListener('dragenter', dragenterHandler);
+                divChar.addEventListener('dragleave', dragleaveHandler);
+                divChar.addEventListener('drop', dropHandler);
+                divChar.addEventListener('dragend', dragendHandler);
+            })
+        };
+
+        function comparePermutatedArrays(array1, array2) {
+            for (var i = 0; i < array1.length; i++) {
+                if (array1[i] != array2[i])
+                    return false;
+            }
+            return true;
+        }
+
+        function shuffle(array) {
+            var n = array.length, i, temp;
+            while (n) {
+                i = Math.floor(Math.random() * n--);
+                temp = array[n];
+                array[n] = array[i];
+                array[i] = temp;
+            };
+            return array;
+        }
+
+
+
+        function dragstartHandler(e) {
+            var divChars = document.querySelectorAll(".char");
+            [].forEach.call(divChars, function(divChar){
+                divChar.classList.add('dragging');
+            })
+
+            dragSrcEl = this;
+            dragSrcEl.classList.remove('dragging');
+
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function dragoverHandler(e) {
+            if (e.preventDefault)
+                e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function dragenterHandler(e) {
+            this.classList.add('over');
+
+        }
+
+        function dragleaveHandler(e) {
+            this.classList.remove('over');
+        }
+
+        function dropHandler(e) {
+            if (e.stopPropagation)
+                e.stopPropagation();
+            if (dragSrcEl != this) {
+                dragSrcEl.innerHTML = this.innerHTML;
+                this.innerHTML = e.dataTransfer.getData('text/html');
+            }
+
+            return false;
+        }
+
+        function dragendHandler(event){
+            dragSrcEl = null;
+            //result.length = 0;
+            var divChars = document.querySelectorAll(".char");
+            [].forEach.call(divChars, function(divChar){
+                divChar.classList.remove('dragging', 'over');
+                //result.push(divChar.textContent);
+            })
+            /*if (comparePermutatedArrays(result, answer)) {
+                console.log("You win!");
+            }*/
+
+
+        }
+
+
+
+
+
+
+    </script>
+</body>
+</html>
