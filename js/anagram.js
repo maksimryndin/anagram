@@ -31,8 +31,6 @@ function Level(levels, levelNumber) {
         shuffle(this.charShuffledArray);
     };
 
-    this.status = null;
-
     this.container = document.createElement('div');
     document.body.appendChild(this.container);
     this.container.id='container';
@@ -43,6 +41,9 @@ function Level(levels, levelNumber) {
         divChar.textContent = char;
         this.container.appendChild(divChar);
     });
+    this.congratulation = document.createElement('h2');
+    this.congratulation.id='congratulation';
+    this.congratulation.textContent = 'Выдающийся результат! Поздравляем!'
 }
 
 Level.prototype.createEventListeners = function() {
@@ -60,10 +61,16 @@ Level.prototype.createEventListeners = function() {
             dragendHandler(e, level, result);
         }, false);
     })
+
 };
 
+Level.prototype.congratulate = function() {
+    this.container.parentNode.removeChild(this.container)
+    document.body.appendChild(this.congratulation);
+}
+
 Level.prototype.clear = function() {
-    this.container.parentNode.removeChild(this.container);
+    this.congratulation.parentNode.removeChild(this.congratulation);
 }
 
 function comparePermutatedArrays(array1, array2) {
@@ -85,6 +92,7 @@ function shuffle(array) {
     return array;
 }
 
+
 function dragstartHandler(e) {
     var divChars = document.querySelectorAll(".char");
     [].forEach.call(divChars, function(divChar){
@@ -96,7 +104,7 @@ function dragstartHandler(e) {
 
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', e.target.innerHTML);
-    e.target.style.visibility = "hidden";
+    e.target.classList.add('removed');
 }
 
 function dragoverHandler(e) {
@@ -129,17 +137,21 @@ function dropHandler(e) {
 function dragendHandler(e, level, result){
     dragSrcEl = null;
     result.length = 0;
-    e.target.style.visibility = "visible";
+    e.target.classList.remove('removed');
     var divChars = document.querySelectorAll(".char");
     [].forEach.call(divChars, function(divChar){
         divChar.classList.remove('dragging', 'over');
         result.push(divChar.textContent);
     })
     if (comparePermutatedArrays(result, level.charArray)) {
-        console.log("You win!");
+        setTimeout(function() {
+            level.congratulate();
+        }, 2000);
         setTimeout(function() {
             level.clear();
             levelForm.style.display = '';
-        }, 2000);
+        }, 4000);
     };
 }
+
+

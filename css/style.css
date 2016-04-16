@@ -30,34 +30,47 @@ h1, h3 {
 }
 
 #container {
-    position: relative;
-    width: 100%;
-    height: auto;
-    margin:auto;
-    align-content: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+    width: 80%;
+    height: 300px;
+    margin: auto;
+    border: 0.15em solid #000;
+    border-radius: 0.4em;
 }
+
 
 .char {
     width: 50px;
     height: 50px;
+    margin: auto;
     font-size: 4em;
     color: #fff;
     text-align: center;
     line-height: 50px;
     background-color: #000;
-    margin: 0.2em;
+
     padding: 0.3em 0.5em;
     border-radius: 0.1em;
-    float:left;
     cursor: move;
 }
 
 .char.dragging {
-    opacity: 0.4;
+    background: #222;
+    color: #FABB2E;
 }
 
 .char.over {
-    border: 2px dashed #000;
+    border: 2px dashed #FABB2E;
+}
+
+.char.removed {
+    border: 2px dashed #FABB2E;
+}
+
+#congratulation {
+    margin-top: 10%;
 }
 
 #level-btn {
